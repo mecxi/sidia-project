@@ -1,0 +1,22 @@
+# Disable directory browsing:
+	Options All -Indexes
+# Prevent folder listing:
+	IndexIgnore *
+
+#Enabling mode_rewrite like hiding certain php file extension and redirect certain file to index page
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+RewriteEngine on
+# Redirect certain paths to index.php:
+RewriteRule ^(config) index
+
+# hide .php filename extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php
+
+#allow cross request
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ blank.php [QSA,L]
+
+</IfModule>

@@ -1,0 +1,9 @@
+m/thread_run -> thread_manager to service per thread allocated
+thread_manager -> servicing contents for each service 
+servicing contents -> service for each users  : content | trivia
+
+new architecture :
+every 10 sec. thread_run > thread_manager to service only if current servicing contents has done
+servicing contents -> prepare service pool for each users : content | trivia
+
+Once the thread_run has completed, schedule service start

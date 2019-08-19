@@ -1,0 +1,91 @@
+/* Custom CSS for global rendering */
+
+.post_hidden {
+    display: none;
+}
+
+.post_default_hidden {
+    display: none;
+}
+
+.inactive {
+    color: red;
+}
+.active {
+    color: green;
+}
+ .with-border ul {
+     display: inline;
+     list-style-type: none;
+ }
+
+/** trigger a mouse over hand ***/
+.fa-edit {
+    cursor:pointer;
+}
+.fa-edit:hover{
+    color: burlywood;
+}
+.error_editing {
+    color: red;
+    text-align: center;
+}
+.success_editing {
+    color: green;
+    text-align: center;
+}
+
+#loader, #loader_body {
+    z-index: 100000000000;
+    /*outline: 1px dashed red;*/
+    background-image: url('../../dist/img/owl_loader.gif');
+    background-size:50px 50px;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display:none;
+}
+
+#loader_body .center {
+    position: absolute;
+    width: 30%;
+    top: 50%;
+    left: 50%;
+    margin-left: -100px; /* margin is -0.5 * dimension */
+    margin-top: 25px;
+    font-family:consolas, sans-serif;
+    text-shadow:3px 3px 2px #C0C0C0;
+    font-style: italic;
+}
+
+
+/** upload style **/
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+/** service storyboard **/
+#storyboard > div:nth-child(3),
+#storyboard > div:nth-child(4) {
+    cursor: pointer;
+}

@@ -1,0 +1,5 @@
+#Prevent browsing these docs through a browser, reserved to dev team only
+<FilesMatch "^.*$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

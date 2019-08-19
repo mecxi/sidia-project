@@ -1,0 +1,179 @@
+/** Mobile Payment API summary **/
+
+// API functions:
+. Bill Payment API
+> Request by SP > requestPayment API
+> Request by User through ECW* > ConfirmThirdPartyPayment API
+
+ECW: Ericsson Converged Wallet
+
+. Deposit
+> Request by SP > depositMobileMoney API
+
+. QueryingSubscriberaccount balance
+> Request by SDP > QueryThirdPartyAccount API
+
+
+// MiddleWare Payment API Service Work Flow
+. Service flow Overview:
+APP 		(Request)>		GATEWAY			(Forward Request)>			SDP
+
+SDP			(Response)>		GATEWAY			(Forward Response)>			APP 
+
+. Payment Service Implementation:
+
+1. APP 		(Request JSON)>		GATEWAY
+
+2. GATEWAY 	(Check Authorisation)
+	. success: proceed to step 3.
+	. fail: return related error message
+	
+3. GATEWAY 	(Determine request type & Process Request initiated by APP)
+	* RequestPayment – Synchronous Flow (ECW) : 
+		. initiate a payment request | request format JSON.
+		e.g.
+		#REQUEST:
+			{
+			  type: 'paymentRequest',
+			  accesscode: 'RPwxaSnBdQ0oGGbKAZn8',
+			  appname: 'musicAPP'
+			  parameters: {
+							accno:'12345',
+							msisdn: '2931229300'
+							productno: '1234',
+							amount:'200',
+							alert: 'Thanks for your order'
+						   }
+			}
+		. type: type of request (required)
+		. accesscode: the authorisation code for the current app. The accesscode is linked to a serviceID on SDP (required)
+		. appname : the app name (optional)
+		. parameters : extra parameters for your request.
+					. accno : the user account no. (required)
+					. msisdn: the user phone number (required)
+					. productno: a product ref for this request. In a case of Asynchronous Flow, the request will be pending. the APP will have to check the status by providing a ref (required)
+					. amount: amount to be deducted (required)
+					. alert: Any text that the vendor would like to display to the subscriber (optional)
+
+		. on successful transaction
+			e.g.
+				#RESPONSE
+				{
+					'success': {
+									code : '01',
+									message: 'Successfully processed transaction',
+									traceno: '215411234',
+									transactionid: '111'
+                    			}
+				}
+
+				. code: related response code. 01 = success, 1000 = pending
+				. message: the response message
+				. traceno: the unique processing number for this request
+				. transactionid: the unique id to query the transaction on SDP side.
+
+		. on a failed transaction
+			e.g.
+			#RESPONSE
+			{
+				'error':{
+							code: '03',
+							message: 'Transaction not allowed'
+                		}
+			}
+
+		
+	* Check or trace a payment request in a pending transaction.
+			#REQUEST :
+			{
+				type: 'paymentCheck',
+				accesscode: 'RPwxaSnBdQ0oGGbKAZn8',
+                appname: 'musicAPP',
+                parameters: {
+                	traceno: '215411234',
+                    transactionid: '111'
+                }
+			}
+
+			.A successfully transaction from the pending request.
+			#RESPONSE:
+			{
+				'result':{
+							code: '01',
+							message: 'Successfully processed transaction'
+						}
+			}
+
+			. An failed transaction from the pending request
+			#RESPONSE:
+			{
+				'result':{
+							code: '03',
+							message: 'Transaction not allowed'
+						}
+			}
+
+			. Still awaiting transaction response
+			#RESPONSE:
+			{
+				'result':{
+							code: '00',
+							message: 'Awaiting transaction report'
+						  }
+			}
+
+			. Transaction request not found
+			#RESPONSE:
+			{
+				'result':{
+							code: '000',
+							message: 'Transaction not found. Please make sure the corresponding traceno is for the given transactionid'
+						 }
+			}
+
+	* Deposit/Refund
+		#REQUEST:
+		{
+		  type: 'depositRequest',
+		  accesscode: 'RPwxaSnBdQ0oGGbKAZn8',
+		  appname: 'musicAPP'
+		  parameters: {
+						msisdn: '0747172211'
+						productno: '45,34,67',
+						amount:'200',
+						alert: 'Your refund has been paid.'
+					   }
+        }
+
+        #RESPONSE:
+        . On Success :
+		{
+			'success': {
+							code : '01',
+							message: 'Successfully processed transaction',
+							traceno: '215411234',
+							transactionid: '111'
+						}
+		}
+
+		. On failure :
+		{
+			'error':{
+						code: 'error_code',
+						message: 'error_description'
+					}
+		}
+
+
+
+
+
+
+	
+
+
+
+
+
+
+

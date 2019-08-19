@@ -1,0 +1,215 @@
+**************** Hair Trivia Project / MTN PROMO *****************
+FUNCTION REQUIREMENT SPECIFICATION “FRS”
+
+2.1	Service Offering
+a.	Level 1 - Glam squad trivia:
+Subscribers will participate in a 7 questions per day SMS trivia on beauty tips. There subscription service @ R2/day (90 days promo)
+    7 days free trial
+
+b.	Level 2 - Free Period (3 days) to Beauty Tips SMS Updates (1 update/day) thereafter, daily SMS updates (R1, 50) (1 update/day)
+
+c.	Level 3 – Slay or Nay voting portal for all MTN subscribers (R1/day)
+
+
+
+
+Re: requirements please see answers below: 
+•         Short codes for SMS - to be provided once the FRS is accepted by MTN - 14th Nov 
+•         Shortcode for USSD - same as above 
+•         APIs for SMS - We will be connecting via the SDP, So we will need to develop ParlayX or Rest  API 
+•         APIs for USSD - Clinton to advise
+Does your application support multiple KWs? 
+•         Keywords level 1 - GO
+•         Keywords level 2 - YES
+•         Keyword level 3 - VOTE
+•         Content - To advise aiming at 14/11/16
+•         Complete scope of work - will share PDD and FRS 11/11/16
+•         Where is it hosted our servers or MTN or client? - Mobiapps hosted
+•         Is there a VPN ? - SDP
+
+•	The campaign requires one USSD short code(*xxx*xxx#) with the following menu
+    •	1. Glam squad trivia
+    •	2. Beauty Tips
+    •	3. Slay or Nay
+    •	4. Info and T&C
+    •	5. unsubscribe
+
+Subscribers to the campaign will be able to unsubscribe by sending a specific key word (STOP) to all the campaign short codes.
+Subscribers will be to unsubscribe from campaign services using a specific key word (STOP ALL) from any of the campaign allocated short code.
+
+******************* RAFFLE ENGINE REQUIREMENT *******************
+The campaign will take form of a trivia based contest that subscribers can participate for a chance a number of prizes: including electronics, cash prizes,
+beauty and hair products at the end of each week and each month
+The trivia service will be marketed to customers of MTN through various communication channels, including sms marketing messages and
+other MTN below the line communication channels.
+
+*************** ************************************************* *************
+I have asked them for demo credentials while we wait for the main credentials.
+Will advise if we get any.
+In the meantime, try your best to get it all setup in the meantime best you can without.
+
+Also for server to load solution onto. Please use the below server.
+**************************
+SERVER :: 139.162.197.108
+**************************
+DB :: LOCALHOST -u root -p Fap3SeStag
+**************************
+DB: 139.162.216.4 -u root -p WaugEHDoDDAA
+
+For access to the front end that chooses a number randomly it is also on this server.
+Make a new director to use for the solution so not to effect what is already on the server.
+
+All data for the game that is currently on this server that you can use to complete the new solution is also on another server;
+
+Mozambique solution.
+213.52.128.175
+139.162.197.108
+
+Let me know if you have any questions.
+
+************************************** NEW SUSBCRIPTION / notifySMSReceipt ****************************
+All subscribe/unsubscribe requests via USSD/SMS will be routed via SDP to us directly with a double opt-in.
+SDP will create 3 different products each with different id and then we will pass on the request for a particular one to SDP.
+We’ll make use of the keywords specified in FRS doc, to distinguish which service the user is subscribing to.
+As for now the FRS doc has no mention of what keywords will be used to unsubscribe, I’ll assume is the usual
+STOP followed by the service specific keyword or STOP ALL to unsubscribe to all services.
+-------------------------------------------- FLOW ---------------------------------------
+User 			    SMSC			    SP		                                        SDP	                    IN
+---------------------->------------------>--process/subscribeProductAPI------------------>---validate request-----
+
+                                         <-----------In processing resp (code:22007233)---
+
+<----notify sub still pending approval---<---In processing resp (code:22007696)----------
+
+<-----------------------------------------Send authorisation SMS message------------------
+----------------------------------------------------- authorise ------------------------->
+                                          <-----------syncOrderRelationShip Api-----------
+                                          -------------------Resp------------------------>
+
+
+
+****************** Reporting Panel/Interfaces *********************
+Cpanel
+U: mobiapps
+P: M0b1@pps
+http://mobi-apps.co.za/cpanel
+----------------
+file manager
+public_html
+reporting
+------------------
+FTP Username: reporting@mobi-apps.co.za
+FTP server: ftp.mobi-apps.co.za
+FTP & explicit FTPS port:  21
+Password: yu4EsasW
+---------------------
+Demo showing all the panel can do:
+http://reporting.mobi-apps.technology/
+
+
+******************* service level 3 - Requirement overview ******************
+--> IN: : User send an SMS with a keyword glam3 or dial USSD string and select to opt in glam3
+--> DataSync: Forward subscription request to SDP (dataSync)
+--> DataSync : SDP confirm the subscription
+--> SP: Record the user has subscribed, generate a random Unique Code and Send to the user.
+--> Unique Code received and download the Glam APP. User is asked to input unique code
+--> Glam APP request verification of the unique Code to SP via restful interface and send confirmation.
+
+**************** SDP SERVICES INFORMATION **************************
+USSD string for subscription: *136*8378*214#
+# SDP SAG API Login header:
+    - SPID : 270110000556
+    - Password: bmeB500
+    - Use MD5 encryption and encrypt (SPID+Password+timestamp)
+
+Product ID : Glam Squad Trivia	2701220000001668
+Product ID :Beauty Tips	2701220000001669
+Product ID :Slay or Nay	2701220000001670
+
+Data Sync Notify URL	http://139.162.197.108/mtnpromo/gateway/sms/
+
+Service ID : Glam Squad Trivia	27012000002196
+Service ID :Beauty Tips	27012000002197
+Service ID :Slay or Nay	27012000002198
+
+
+API Name
+
+	sendsms	http://196.11.240.224:8310/SendSmsService/services/SendSms
+	Subsribe product  request 	http://196.11.240.224:8310/SubscribeManageService/services/SubscribeManage
+	unSubsribe product  request 	http://196.11.240.224:8310/SubscribeManageService/services/SubscribeManage
+
+TEST NUMBER = 27788273607
+TMP ACCESSCODE = 8393006881124
+
+**** TESTBED SMS Subscription *****
+Glam Squad Trivia
+send  subSquad11 to 08393006881072
+---------------------------------
+Beauty Tips
+send  subbts to 08393006881123
+----------------------------------
+Slay or Nay
+send subhghs to 8393006881123
+
+****************** SIDIA PRODUCTION CREDENTIALS ********************
+ USSD STRING :: *136*921#
+# SDP SAG API Login header:
+    - SPID : 270110001205
+    - Password: bmeB500
+    - Use MD5 encryption and encrypt (SPID+Password+timestamp)
+
+SDP API Name
+    startsmsnotification            http://196.11.240.223:Port/SmsNotificationManagerService/services/SmsNotificationManager
+	sendsms	                        http://196.11.240.223:8310/SendSmsService/services/SendSms
+	Subsribe product  request 	    http://196.11.240.223:8310/SubscribeManageService/services/SubscribeManage
+	unSubsribe product  request 	http://196.11.240.223:8310/SubscribeManageService/services/SubscribeManage
+
+Product ID : Glam Squad Trivia	2701220000003343
+Product ID : Beauty Tips	2701220000003344
+Product ID : Slay or Nay	2701220000003345
+
+Data Sync Notify URL	http://139.162.197.108/mtnpromo/gateway/sms/
+
+Service ID : Glam Squad Trivia	27012000004680
+Service ID :Beauty Tips	27012000004681
+Service ID :Slay or Nay	27012000004682
+
+**** LIVE SMS Subscription *****
+Glam Squad Trivia
+send  SUBGLAM to 30831 | GLAM to 30831
+---------------------------------
+Beauty Tips
+send  SUBBT to 32572 | GLAM to 32572
+----------------------------------
+Slay or Nay
+send SUBSN to 39048 | GLAM to 39048
+
+------------------------------------
+Ads:: Campaign Promotion -
+Discover Beauty Tips and be Glam and a chance to win R70,000 in monthly prizes! First 3 days FREE, R1,50/day thereafter! A.YES B.NO C.Later
+
+Join the Glam Squad Trivia and learn to look and feel good, You could WIN R15,000 plus goodies, weekly! 7 days FREE week & R2/day afterwards. A.YES B.NO C.Later
+
+
+-------------------------------------
+Google shortened URLS::
+https://trivia.sidia.co.za/login =  https://goo.gl/4vhI7N
+https://trivia.sidia.co.za/register = https://goo.gl/GEa9Nz
+
+-------------------------------------
+@every Friday @10:00 send sponsors messages.
+
+-----------------------------------------
+admin@sidia.co.za
+password: @2017$sidia
+
+---------- Partner Accounts ------------
+
+africabrands@sidia.co.za	| 27000000001 | pssWD@5417
+
+mobi-apps@sidia.co.za	| 27000000002 | pssWD@8536
+
+apexdigital@sidia.co.za	| 27000000003 | pssWD@3486
+
+partner4@sidia.co.za	| 27000000004 | pssWD@0185

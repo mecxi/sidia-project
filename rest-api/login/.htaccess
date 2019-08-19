@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+Options +FollowSymlinks
+RewriteEngine on
+
+# Set the base to this directory:
+RewriteBase /rest-api/login/
+
+# Map URI to internal URL
+RewriteRule ^request/$ _index.php?request=login
+RewriteRule ^cancel/$ _index.php?request=logout
+RewriteRule ^register/$ _index.php?request=register
+RewriteRule ^reset/$ _index.php?request=reset
+RewriteRule ^auth-code/$ _index.php?request=auth
+RewriteRule ^keep-alive/$ _index.php?request=alive
+RewriteRule ^([abc]+)/$ _index.php?request=fail
+
+</IfModule>

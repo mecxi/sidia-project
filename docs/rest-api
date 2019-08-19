@@ -1,0 +1,74 @@
+`/************* mtnpromo Restful API web service - Manual *********/
+
+/** FORMAT **/
+. type:             POST
+. contentType:      'application/json; charset=utf-8'
+. dataType: 'json'
+. httpVersion : "HTTP/1.1"
+
+
+/** Basic usage | ajax POST **/
+#Example request
+$.ajax({
+        url: 'URI method call',
+        type: 'POST',
+        data: JSON.stringify({ param:value}),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function(result) {},
+        error: function(){}
+    });
+
+#Example response
+{
+  'key':'value',
+  'key':{
+        'key':'value'
+    }
+}
+
+/** Login API **/
+--> Requesting login
+. uri method: http://__IP__/mtnpromo/rest-api/login/request/
+. param: username, password  /* a username can be phone no or email address */
+. result: {"id":val,"name":"val","surname":"val","phone":"val","role":val,"date_created":"val"}
+. error: {"error":"error message"}
+
+--> Request logout
+. uri method: http://__IP__/mtnpromo/rest-api/login/cancel/
+. param: login_id   /* the loginID that was supplied during login */
+result: {"result": true}  /* session close successfully */
+error:
+    . {"error": true} /* fail closing the session */
+    . {"error": "error related messages"}
+
+
+--> Request registration
+. uri method: http://__IP__/mtnpromo/rest-api/register/
+. param: fullname, email, phone, password
+result: {"result": true}  /* user registered successfully */
+error: {"error": "error related messages"}
+
+
+/** Code Verification **/
+--> Verify user code
+. uri method: http://__IP__/mtnpromo/rest-api/auth-code/
+. params: phone, code
+result: {"result": true}  /* code verified successfully */
+error: {"error": "error related messages"}
+
+--> Glam Squad Code Subscription verification
+. URI method: https://139.162.197.108/mtnpromo/rest-api/auth-code/
+. Params: phone, code, type:APP
+. Result : { "result": value }
+            .value: true /* code has been verified and user still an active subscriber */
+            .value: false /* code has been verified but the user is unsubscribed to the service */
+
+           {"error": "error related messages"}
+
+
+
+
+
+
+

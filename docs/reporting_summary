@@ -1,0 +1,27 @@
+#Interfaces (UI) – Reporting
+
+3 Roles: Admin, System Admin, Users (subscriber to service level 3 – voting)
+?	System Admin role (Mobi-Apps):
+    •	Track system performance on daily operations (Server CPU, RAM, HDD capacity, Database availability)
+    •	Cancel scheduled operation, set or postponed scheduled broadcast
+    •	Track broadcast daily operations, queuing, retries, network errors [DONE]
+
+?	Admin (client):
+    • List active/ inactive subscribers/ Members [DONE]
+    • List services per day, weekly, month
+    • List daily, weekly, monthly hits for subscribers/unsubscribed, questions answered/unanswered
+    • report a subscription history for a user
+    • Upload questions ( cannot upload same question twice)
+    • Edit questions | set inactive or active | change content | change broadcast day (cannot edit question already on the queue or pushed)
+    • Delete questions (cannot delete question already on the queue or pushed)
+    . Select Weekly, Monthly Winners for the Grand Prise (Raffle Engine) [Progress]
+    .  Being able to performs subscribe/unsubscribed requests on behalf of the user
+
+?   Users
+    • Only having access to voting panel
+
+
+
+
+
+

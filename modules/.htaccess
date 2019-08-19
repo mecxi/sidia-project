@@ -1,0 +1,5 @@
+#Prevent call or access to sensible files via a web browser
+<FilesMatch "^(thread_manager|servicing_level_1|threading_level_1|threading_level_2|thread_retries|set_cleanup|set_first_brcast|set_reset|set_retry|set_run|thread_cleanup|thread_reset|thread_retries|thread_run|unset_run|unthread_run|datasync_on_demand|notify_on_demand)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

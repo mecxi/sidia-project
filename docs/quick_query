@@ -1,0 +1,12 @@
+SELECT
+	msisdn,
+	users_sub_history.start_date AS StartDate,
+	users_sub_history.end_date AS EndDate,
+	services_list.`name` AS ServiceName
+FROM
+	`users`
+INNER JOIN users_sub_history ON users_sub_history.user_id = users.id
+INNER JOIN services_list ON services_list.id = users_sub_history.service_id
+WHERE
+users_sub_history.end_date LIKE '2017-05-23%'
+ORDER BY users_sub_history.start_date ASC

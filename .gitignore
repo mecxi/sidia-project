@@ -1,0 +1,4 @@
+log/*
+error.log
+requests.log
+debugs/*

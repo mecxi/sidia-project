@@ -1,0 +1,27 @@
+#Prevent access or executing to sensible files through a web browser: sms_service_ctrl | ussd_service_ctrl
+<FilesMatch "^(sms_service_ctrl|ussd_service_ctrl)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+Options +FollowSymlinks
+RewriteEngine on
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ blank.php [QSA,L]
+
+# Set the base to this directory:
+RewriteBase /gateway/
+
+# Map URI to internal URL
+RewriteRule ^report/$ report.php
+RewriteRule ^sms/$ sms.php
+RewriteRule ^sms sms.php
+RewriteRule ^ussd/$ ussd.php
+RewriteRule ^payment/$ payment.php
+RewriteRule ^payment payment.php
+
+
+
+</IfModule>

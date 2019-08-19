@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+Options +FollowSymlinks
+RewriteEngine on
+
+# Set the base to this directory:
+RewriteBase /rest-api/users/
+
+# Map URI to internal URL
+RewriteRule ^total-subs/$ _index.php?request=total_subs
+RewriteRule ^display-subs/$ _index.php?request=display_subs
+RewriteRule ^profile/(stats)/$ _index.php?request=stats
+RewriteRule ^profile/(post)/$ _index.php?request=post
+RewriteRule ^profile/(activity)/$ _index.php?request=activities
+RewriteRule ^query/(services-history)/$ _index.php?request=q_services_history
+RewriteRule ^request/(services-related)/$ _index.php?request=r_services_related
+RewriteRule ^([abc]+)/$ _index.php?request=fail
+
+</IfModule>

@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+Options +FollowSymlinks
+RewriteEngine on
+
+# Set the base to this directory:
+RewriteBase /mtnpromo/rest-api/auth-code/
+
+# Map URI to internal URL
+RewriteRule ^$ _index.php?request=verify_code
+RewriteRule ^([abc]+)/$ _index.php?request=fail
+
+</IfModule>

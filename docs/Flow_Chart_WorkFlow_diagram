@@ -1,0 +1,95 @@
+::1 ./modules/threading_manager.php
+* Current script keeps track of how resources are being used and when free-up will allocate
+    more thread on scheduled broadcast/push operations
+* Will be automate to run every min once the operation has started
+* Will call the servicing script by passing the number of thread to allocate depending on current running threads
+* we allocate more threads only when half of running threads are completed
+
+::2 ./modules/servicing_level_1.php
+ * Servicing trivia daily questions. Tasks are allocated in individual thread per user running in parallel
+   to control memory allocation and resources
+ * This script will be triggered by the thread manager with a given number of thread to run
+ /var/log/mtn_promo/last_ID.log   | this file serve to track the last user for current load.
+ * Assign the right permission to that folder if running a test via httpd
+ * It checks if queued subscribers haven't already received today service
+
+ ::3 ./modules/threading_level_1.php
+ * Start daily trivia questions operations for the given active subscriber for service level 1
+ * USSD :: the operation will wait for a response within a SDP allowed response time - code 2 will be returned if the user decides not to answer
+ * SMS :: the operation will not wait for the user reply, [code 2] will be triggered on purpose. The answer will be processed whenever the user decides to:
+ * Schedule a retry on failed messages. If the user receives the question and decide to not answer, no retries will be made.
+
+ ::4 ./modules/servicing_subscription.php
+ * Add susbcription / unsusbcribe requests on demand
+ * Subcription - unsubscribe / resubscribe request state
+    [Code no.]
+    --> 1. New user added successfully
+    --> 2. User has been added without stats | stats=current level, score, service_id Please check the table 'users_stats' exists | very unlikely to happen
+    --> 3. Failed creating user into the database. Please review database log './log/%today%.log' file for any related errors
+    --> 4. Current user has an existing subscription
+    --> 5. Warning ! User doesn't exist in the system!
+    --> 6. User has been successfully un-subscribed
+    --> 7. The system fails to unsubscribe the user | database system is down
+    --> 8. User has been re-subscribed successfully!
+    --> 9. An error occurred re-subscribing current user
+    --> 10. User has no running subscription | on un-subscribe request
+    --> 11. SDP fails to process user request
+
+ ::5 ./modules/servicing_on_demand.php
+ * For new subscription request entering the promotion, start servicing today question
+ * Void servicing for user who un-subscribe and re-subscribe on the same day if they've already been queued
+
+ ::5 ./modules/thread_retries.php   | @10:30AM -> 15 min
+ *Start retry operation for services that fails due to a network communication issues
+
+ ::6 /modules/thread_start.php | @10:00AM -> 5min
+ *Start on schedule time set by the system, check services are enabled to broadcast or not expired
+
+ ::7 /modules/thread_manager.php
+ *Controls and allocates task as per the resource availability for each service level
+ as per the operation set to run in parallel.
+
+ ::8 /modules/thread_close.php | @03:00AM -> once daily
+ * close all thread operations
+ * reset last users_IDs for services 1 and 2
+ * restart the database and the web server for a clean start the next day
+ * schedule a new run operation for the day
+
+ ::9 syncOrderRelation Response
+ 0 --> OK
+ 1 --> 1211
+ The field format is incorrect or the value is invalid.
+ The Format value is incorrect or in an incorrect format in the body of the subscription relationship synchronization request.
+ 2 --> 2030
+ The subscription relationship already exists.
+ The subscription relationship already exists in the SP system.
+ 3 --> 2031
+ The subscription relationship does not exist.
+ The subscription relationship does not exist in the SP system.
+ 4 --> 2032
+ The service does not exist.
+ The service to which the product belongs does not exist.
+ 5 --> 2033
+ The service is unavailable.
+ The service to which the product belongs is in an abnormal status.
+ 6 --> 2034
+ The service is unavailable.
+ The service to which the product belongs cannot be subscribed to.
+ 7 --> 2035
+ The service is unavailable. Campaign is not opened for subscription. Contact SP
+ 8 --> 2500
+ An internal system error occurred
+
+
+::10 Billing report
+Daily Billing Report Per Services |GLAM SQUAD | BEAUTY TIP | SLAY or NAY
+-> table: <Day, Date, Daily Subs, 'Daily Cancel' Total Subs, Daily Charged, Target Charged, Rate Charged, Repeat Charged, Total Charged>
+
+Daily Charged Rate: (today_SDP_charged * 100) / (today_expecting_charged = (total_subs - new_subs) * rate)
+repeat_bills : (totals_subs_since_service_inception - (new_subs_today + unsubs_today))
+Target charged: (today_expected_charged = (total_subs - new_subs - new_subs_yesterday - new_subs_before_yesterday)  * price) -
+
+
+
+
+

@@ -1,0 +1,182 @@
+# Main database <tl_contents>  |
+    Tables definitions
+
+    // users details
+    * tl_users { id, msisdn }
+    * tl_users_added_services {user_id, service_id, status}
+
+    // keeps of users subscription and unsubscription, re-susbcription activity
+    * tl_users_sub_history { id, user_id, service_id, start_date, end_date }
+
+    // keeps track users score and level activity per service
+    * users_stats { id, user_id, current_level, current_score, service_id, week_entries, month_entries}
+
+    //promo service list
+    * services_list { id, name, description, type, service_level, start_date, end_date, table_name}
+
+    //services contents
+    * service_trivia { id, question, answer, status, score, service_id, date_created }
+    * service_tips { id, message, status, service_id date_created }
+
+    //Track ussd menu for current user session
+    * sys_ussd_menu {msisdn, extra_menu}
+
+    //Login management
+    * sys_login {id, name, surname, email, password, phone_no, roles }
+    . roles: 1 = System Administrator | full access rights
+    . roles: 2 = Admin/Client | Partial Rights - performing services duties task such upload contents, winning draw, prizes ads
+    . roles: 3 = Restrict | Member
+    . roles: 4 = CustomerCare | performing unsubscription duties, users queries
+    . roles: 5 = Partner | reviewing stats
+    . roles: 6 = Admin Less privileges
+
+    * sys_cache_register {name, surname, email, password, phone_no, by_date, token, trace_id}
+
+    //Service Level 3 | Code Login to Glam Squad APP
+    * service_code {id, code, used}
+    . code is a 10 combination of letter and number
+
+    //System Settings
+    * sys_settings {operation_id, name, description, start_date, start_time, close_date, end_time}
+    start_date:1977 -> operation will run daily
+    start_time:12:00 AM -> operation will run 24hours
+    op_id:
+        1 -> schedule daily broadcast time, cleaning operation time
+
+    //Winner table
+    * winners : {id, user_id, score, top_selected, random_selected, week_selected, Week, month_selected, month, date_created, created_by}
+
+    // Draw entries
+    * services_entries : { user_id, service_id, week_entries, month_entries }
+
+    //Notify
+    sys_notify {user_id, trace_id, related_id, notify_date }
+
+    //Service prize list
+    service_prize {id, prize, type, value, quantity, weekly, monthly, date}
+
+    //Services logs details: log daily services operations
+    tl_services_logs {service_local_id, process, date_created, message, date}
+    process legend:
+        * start: a service has started by the scheduled time
+        * start_error : a service start encounters an error
+        * retries : a service has log a retry operation
+        * start_completed : a service completed broadcast operation
+
+    //Service broadcast type
+     tl_broadcast_type {id, type}
+        * Initial Content
+        * Up-to-day Content
+
+
+# Gateway database <tl_gateway>
+    //Monitor timing of thread running in parallel in order to allocate more threads
+    threading_level_1 { user_id, start_time, end_time, completed }
+    threading_level_2 { user_id, start_time, end_time, completed }
+    threading_level_3 { user_id, start_time, end_time, completed }
+
+    //track user services requests subscribe/unsubscribe/renewal to SDP which serves for billing as well
+    tl_sync_services_requests
+    { msisdn, keyword, req_type, req_service, req_state, by_date, req_sent, processing, resp_time, resp_type, resp_desc,
+    resp_service_id, transID, gracePeriod, date_created, daily_count, code }
+    . msisdn : user_no
+    . keyword: related service keyword used | 'NOTFOUND' if unrelated
+    . req_type: subscribe/un-subscribe/renewal
+    . req_service: related service_local_id
+    . req_state: 0=fails 1=success
+    . by_date: time request sent
+    . req_sent: 1=sent 0=not sent
+    . processing: 1=in progress / 0=pending approval / 2=processed / 3=sdp has processed and sent in a request relation
+    . resp_time: time sdp sent resp
+    . resp_type: 1=add 2=delete 3=update/renewal
+    . resp_desc: addition/deletion/update
+    . resp_service_id: the serviceID that SDP processes the request
+    . transID: sdp transactionID
+    . gracePeriod: 1: free period | 0: service is being charged
+    . date_created: track and maintain unique request per day per user
+    . daily_count: count on daily basis how many times same request has been performed
+    . code: local subscription/un-subscribe result code - please see below:
+        [Code no.]
+            --> 0. In progress/unconfirmed
+            --> 1. request process successfully
+            --> 2. User has been added without stats | stats=current level, score, service_id Please check the table 'users_stats' exists | very unlikely to happen
+            --> 3. Failed creating user into the database. Please review database log './log/%today%.log' file for any related errors
+            --> 4. Current user has an existing subscription
+            --> 5. Warning ! User doesn't exist in the system!
+            --> 6. User has been successfully un-subscribed
+            --> 7. The system fails to unsubscribe the user | database system is down
+            --> 8. User has been re-subscribed successfully!
+            --> 9. An error occurred re-subscribing current user
+            --> 10. User has no running subscription | on un-subscribe request
+            --> 11. SDP fails to process user request
+            --> 12. Service has been closed
+            --> 13. Broadcast has been disabled
+            --> 14. Invalid SDP format or Invalid Service Request
+            --> 15. SDP - 500 Internal Server Error
+            --> 16. Service hasn't opened yet
+            --> 17. Invalid SDP format or Product Request
+
+
+    //track payment requests
+    tl_sync_payment_requests
+        { msisdn, appname, req_type, trace_id, req_amount, req_service, req_product_no, req_state, by_date, req_sent, processing, resp_time, resp_type,
+          resp_code, resp_desc, transID, date_created }
+        . msisdn : user's phone number
+        . appname: related appname initiated the request
+        . req_type: charge
+        . trace_id : the processnumber generated to trace current request
+        . req_amount : the amount to be charged on a user account
+        . req_service: related service_local_id
+        . req_product_no : app given product no for references
+        . req_state: 0=fails 1=success
+        . by_date: time request sent
+        . req_sent: 1=sent 0=not sent
+        . processing: 1=in progress / 0=pending approval / 2=processed / 3=sdp has processed and sent in a response relation
+        . resp_time: time sdp sent the response
+        . resp_type: success | denied | pending
+        . resp_code: sdp response code
+        . resp_desc: sdp response description
+        . transID: sdp transactionID
+        . date_created: date the request is logged
+
+
+
+    //first time content delivery will be delayed to allow SDP to send all welcome messages
+    delay_content_delivery
+    { user_id, service_id, msisdn, trace_id, sender_cb, sleep, sent, date_created }
+
+    //queue contents for trivia interaction
+    queued_datasync
+    {user_id, msisdn, service_id, trivia_id, trace_id, sleep, date_created, delivered}
+
+    //queue notifies for trivia interaction
+    queued_notify
+    {msisdn, trace_id, trivia_id, score, sent, delivered}
+
+# datasync database <mtn_promo_datasync>
+    //sync processed data for current user
+      . service level 1 | servicing_level_1 {trace_id, user_id, trivia_id, user_answer, score,  process_start, process_end, process_state}
+      . service level 2 | servicing_level_2 {tracer_id, user_id, content_id, process_start, process_end, process_state}
+      . service level 3 | servicing_level_3 {tracer_id, user_id, code_id, process_start, process_end, process_state}
+      . process_state value explain below:
+    process_state = 0 -> Question was queued but not forwarded/sent as the user still have unanswered question.
+    process_state = 1 -> user has answered current question/sent.
+    process_state = 2 -> current question is sent and awaiting user to answer. / applied only to service level 1
+    process_state = 3 -> current question has failed due network communication error |
+                        question will be retried by the retry_operation controller in the next 5 min
+    . please note that one user cannot have currently process_state 2 and 3 at the same time.
+
+    //retry automated operation controller | schedule_retries
+    {date_created, time, count, completed, service_id, date_completed}
+    . retry every fails broadcast service. interval: 5min -> this can be altered by admin/UI
+    . retry operations will close @11:00pm | no more retry up until next broadcast -> this can be altered by admin/UI
+
+    // Upon subscription contents will be delayed to allow a welcome msg from SDP to be forwarded
+     first_contents_delivery {user_id, service_id, msisdn, trace_id, sender_cb, sleep, sent, date_created }
+
+    //In order to send a product subscribe request, we keep track of any web request
+    web_recruit_request { trace_id, service_id, msisdn, req_result, auth_token, token_expiry, date_created }
+
+
+
+

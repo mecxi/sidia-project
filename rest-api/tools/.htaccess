@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+Options +FollowSymlinks
+RewriteEngine on
+
+# Set the base to this directory:
+RewriteBase /rest-api/tools/
+
+# Map URI to internal URL
+RewriteRule ^draw-engine/(preview|range|raffle|reset|notify)/$ _index.php?request=$1
+RewriteRule ^winners/$ _index.php?request=winners
+RewriteRule ^recruit/(web-auth)/?$ _index.php?request=$1
+RewriteRule ^services/(upload|list|update|add)/?$ _index.php?request=$1
+RewriteRule ^([abc]+)/$ _index.php?request=fail
+
+</IfModule>

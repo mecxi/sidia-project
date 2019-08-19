@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+Options +FollowSymlinks
+RewriteEngine on
+
+# Set the base to this directory:
+RewriteBase /rest-api/report/
+
+# Map URI to internal URL
+RewriteRule ^entries/$ _index.php?request=entries
+RewriteRule ^payment/$ _index.php?request=payment
+RewriteRule ^broadcast/$ _index.php?request=broadcast
+RewriteRule ^billing/$ _index.php?request=billing
+RewriteRule ^billings/?$ _index.php?request=billings
+RewriteRule ^traffic/?$ _index.php?request=traffic
+RewriteRule ^([abc]+)/$ _index.php?request=fail
+
+</IfModule>

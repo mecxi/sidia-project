@@ -1,0 +1,26 @@
+<IfModule mod_rewrite.c>
+# Turn on the engine:
+RewriteEngine on
+
+# Set the base to this directory:
+RewriteBase /public/
+
+# Redirect certain paths to index.php for viewing:
+RewriteRule ^(subscribers|logout)/?$ index.php?view=$1
+RewriteRule ^subscribers/(new|active|inactive|members)/?$ index.php?view=$1
+RewriteRule ^manage/(services|subscriptions|addservice|addDrawEngine|draws)/?$ index.php?view=$1
+RewriteRule ^reporting/([0-9]+)?$ index.php?view=reporting&id=$1
+RewriteRule ^draw-engine/([0-9]+)?$ index.php?view=draw-engine&id=$1
+RewriteRule ^users/(profile)/?$ index.php?view=$1
+RewriteRule ^services/(bulkSMS)/?$ index.php?view=$1
+RewriteRule ^(login)/?$ login.php
+RewriteRule ^(register)/?$ register.php
+RewriteRule ^(reset)/?$ reset.php
+RewriteRule ^(api)/?$ api.php
+
+# hide .php filename extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php
+
+</IfModule>
